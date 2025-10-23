@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITC-PEDIA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Apple-style System Font Stack */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.47059;
+            letter-spacing: -0.022em;
+            font-weight: 400;
+            overflow-x: hidden;
+            background: #fbfbfd;
+            color: #1d1d1f;
+            font-feature-settings: "kern";
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Apple-style Navigation with ITC Red */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #ff0000 0%, #b83e3e 100%);
+            box-shadow: 0 2px 20px rgba(255, 0, 0, 0.15);
+            z-index: 1000;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .nav-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 22px;
+            height: 44px;
+            background: transparent;
+        }
+
+        .logo {
+            height: 1.6rem !important;
+            width: auto;
+            display: block;
+            opacity: 0.9;
+            transition: opacity 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .logo:hover {
+            opacity: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            font-weight: 400;
+            font-size: 12px;
+            letter-spacing: -0.01em;
+            text-decoration: none;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+            position: relative;
+            opacity: 0.9;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: #ffffff;
+        }
+
+        /* User info Apple style */
+        #user-info {
+            color: #fff;
+            font-weight: 500;
+            font-size: 12px;
+            opacity: 0.9;
+            letter-spacing: -0.01em;
+        }
+
+        #logout-btn {
+            display: none;
+            margin-left: 8px;
+            padding: 4px 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-weight: 500;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+            letter-spacing: -0.01em;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        #logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* Hero Section - Apple Style */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, #fbfbfd 0%, #f5f5f7 100%);
+            color: #1d1d1f;
+            overflow: hidden;
+            padding: 0 22px;
+        }
+
+        .bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0.15;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(251, 251, 253, 0.9) 0%, rgba(245, 245, 247, 0.8) 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 3;
+            max-width: 692px;
+            padding: 0 22px;
+        }
+
+        .hero h1 {
+            font-size: clamp(28px, 6vw, 80px);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            margin-bottom: 18px;
+            color: #1d1d1f;
+            animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.6, 1) both;
+        }
+
+        .hero p {
+            font-size: 21px;
+            line-height: 1.381;
+            font-weight: 400;
+            letter-spacing: 0.011em;
+            margin-bottom: 30px;
+            color: #515154;
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.6, 1) 0.1s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.6, 1) 0.2s both;
+        }
+
+        /* Apple-style Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 980px;
+            font-size: 17px;
+            font-weight: 400;
+            letter-spacing: -0.022em;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 116px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #ff0000;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #d70000;
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+
+        .btn-secondary:hover {
+            background: #ff0000;
+            color: #fff;
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: #ff0000;
+            color: #fff;
+            border-color: #b80000;
+        }
+
+        /* Features Section - Apple Grid Style */
+        .features {
+            width: 100%;
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 94px 22px;
+            background: #fbfbfd;
+            color: #1d1d1f;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1.08333;
+            letter-spacing: -0.003em;
+            margin-bottom: 18px;
+            color: #1d1d1f;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 21px;
+            line-height: 1.381;
+            font-weight: 400;
+            letter-spacing: 0.011em;
+            color: #515154;
+            margin-bottom: 64px;
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 64px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 700px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                gap: 32px;
+            }
+        }
+
+        .feature-card {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 18px;
+            padding: 40px 32px;
+            text-align: center;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+            color: #1d1d1f;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 280px;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.02) 0%, rgba(255, 0, 0, 0.01) 100%);
+            opacity: 0;
+            transition: opacity 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border-color: rgba(255, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #ff0000 0%, #d70000 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.25);
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.16667;
+            letter-spacing: 0.009em;
+            margin-bottom: 8px;
+            color: #1d1d1f;
+            flex-shrink: 0;
+        }
+
+        .feature-card p {
+            color: #515154;
+            font-size: 17px;
+            line-height: 1.47059;
+            letter-spacing: -0.022em;
+            font-weight: 400;
+            margin-bottom: 24px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-card .btn {
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        /* Remove particles - too distracting for Apple style */
+        .particle {
+            display: none;
+        }
+
+        /* Apple-style smooth animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Login Form - Apple Style */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #1d1d1f;
+            padding: 40px;
+            border-radius: 18px;
+            width: 340px;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-form h2 {
+            margin-bottom: 24px;
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.14286;
+            letter-spacing: 0.007em;
+            color: #1d1d1f;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 400;
+            letter-spacing: -0.022em;
+            background: rgba(255, 255, 255, 0.8);
+            color: #1d1d1f;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #ff0000;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #ff0000;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: -0.022em;
+            cursor: pointer;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .login-form button:hover {
+            background: #d70000;
+            transform: scale(1.02);
+        }
+
+        .login-message {
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: -0.016em;
+        }
+
+        /* Atención telefónica - Detalles */
+        .atencion-telefonica-detalle {
+            background: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .detalle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem auto;
+            background: rgba(251, 251, 253, 0.95);
+            color: #1d1d1f;
+            border-radius: 22px;
+            box-shadow: 0 16px 48px rgba(31, 38, 135, 0.2);
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            padding: 40px 32px;
+            border: 1px solid rgba(174, 174, 178, 0.16);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .detalle-container h2 {
+            margin-bottom: 24px;
+            font-size: 1.75rem;
+            font-weight: 600;
+            text-align: center;
+            color: #ff0000;
+            letter-spacing: -0.022em;
+            line-height: 1.2;
+        }
+        .detalle-container ul {
+            margin-bottom: 2rem;
+            padding-left: 1.2rem;
+        }
+        .detalle-container li {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #000;
+        }
+
+        /* Mejora la simetría y centrado de las esferas en el modal */
+        .detalle-esferas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 32px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Organización: 2 en primera fila, 3 en segunda fila */
+        .detalle-esferas .esfera:nth-child(1),
+        .detalle-esferas .esfera:nth-child(2) {
+            flex: 0 0 calc(50% - 10px);
+        }
+
+        .detalle-esferas .esfera:nth-child(3),
+        .detalle-esferas .esfera:nth-child(4),
+        .detalle-esferas .esfera:nth-child(5) {
+            flex: 0 0 calc(33.333% - 14px);
+        }
+
+        @media (max-width: 600px) {
+            .detalle-esferas {
+                max-width: 300px;
+            }
+            
+            .detalle-esferas .esfera:nth-child(1),
+            .detalle-esferas .esfera:nth-child(2),
+            .detalle-esferas .esfera:nth-child(3),
+            .detalle-esferas .esfera:nth-child(4),
+            .detalle-esferas .esfera:nth-child(5) {
+                flex: 0 0 calc(50% - 10px);
+            }
+            
+            .detalle-esferas .esfera:nth-child(5) {
+                flex: 0 0 100%;
+                max-width: calc(50% - 10px);
+                margin: 0 auto;
+            }
+        }
+
+        .esfera {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(174, 174, 178, 0.2);
+            border-radius: 18px;
+            padding: 16px 8px 12px 8px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 16px rgba(31, 38, 135, 0.1);
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+            color: #1d1d1f;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .esfera:hover {
+            transform: translateY(-6px) scale(1.02);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 24px rgba(31, 38, 135, 0.15);
+        }
+        .esfera-icono {
+            width: 56px;
+            height: 56px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(255, 0, 0, 0.25);
+        }
+        .esfera-titulo {
+            color: #1d1d1f;
+            font-size: 13px;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 4px;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .detalle-container .btn {
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: -0.01em;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.6, 1);
+            border: 1px solid rgba(174, 174, 178, 0.48);
+            background: rgba(255, 255, 255, 0.8);
+            color: #1d1d1f;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .detalle-container .btn:hover {
+            background: #ff0000;
+            color: #fff;
+            border-color: transparent;
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(255, 0, 0, 0.25);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .login-form {
+                width: 90%;
+                max-width: 400px;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+    .features {
+        background: #000 !important;
+        color: #fff;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <img src="media/logotipo_ITC.svg" alt="ITC Logo" class="logo">
+                <span id="user-info"></span>
+                <button id="logout-btn">Salir</button>
+            </div>
+            <ul class="nav-links">
+                <li><a href="https://sistema3.itc.com.ar/" target="_blank" rel="noopener">Sistema actividades</a></li>
+                <li><a href="#">HubSpot</a></li>
+                <li><a href="#">Speedtest</a></li>
+                <li><a href="#">Smart OLT</a></li>
+                <li><a href="#">WHM-hosting2</a></li>
+                <li><a href="#">ping.eu</a></li>
+                <li><a href="#">Blacklists</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <video class="bg-video" autoplay loop muted playsinline>
+            <source src="media/5527786-uhd_3840_2160_25fps.mp4" type="video/mp4">
+            Tu navegador no soporta video HTML5.
+        </video>
+        <!-- Capa negra semitransparente sobre el video -->
+        <div class="video-overlay"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        
+        <div class="hero-content">
+            <h1>Bienvenido a ITC-PEDIA</h1>
+            <p>Tu instructivo digital oficial donde encontrarás toda la información necesaria para realizar tus tareas de forma eficiente, segura y alineada con los protocolos de la organización. Accedé fácilmente a manuales, procedimientos, recursos útiles y buenas prácticas, actualizados y organizados por área.</p>
+            <div class="cta-buttons">
+                <a href="#servicios" class="btn btn-primary">Descubre Más</a>
+                <a href="#contacto" class="btn btn-secondary">Creación</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="servicios">
+        <h2 class="section-title">Nuestras Áreas</h2>
+        <p class="section-subtitle">Accede a documentación especializada, procedimientos detallados y recursos organizados por área de trabajo.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🏢</div>
+                <h3>Atencion en sucursales</h3>
+                <p>Procedimientos y herramientas para una atención presencial eficiente y clara.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Canal Digital</h3>
+                <p>Guías para brindar soporte ágil y preciso en plataformas digitales y redes sociales.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎧</div>
+                <h3>Atención telefónica</h3>
+                <p>Instrucciones clave para ofrecer asistencia efectiva en cada llamada.</p>
+                <button class="btn btn-primary" id="btn-atencion-telefonica" type="button">Ver detalles</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detalles Atención Telefónica -->
+    <section class="atencion-telefonica-detalle" id="atencion-telefonica-detalle" style="display:none;">
+    <div class="detalle-container">
+        <h2>Atención Telefónica - Detalles</h2>
+        <div class="detalle-esferas">
+            <div class="esfera">
+                <div class="esfera-icono">💼</div>
+                <div class="esfera-titulo">Comercial</div>
+            </div>
+            <div class="esfera" id="esfera-soporte">
+                <div class="esfera-icono">🛠️</div>
+                <div class="esfera-titulo">Soporte técnico</div>
+            </div>
+            <div class="esfera">
+                <div class="esfera-icono">🤝</div>
+                <div class="esfera-titulo">Fidelización</div>
+            </div>
+            <div class="esfera">
+                <div class="esfera-icono">💳</div>
+                <div class="esfera-titulo">Cobranza</div>
+            </div>
+            <div class="esfera">
+                <div class="esfera-icono">📋</div>
+                <div class="esfera-titulo">Administrativa</div>
+            </div>
+        </div>
+        <button class="btn btn-secondary" id="cerrar-detalle" type="button">Cerrar</button>
+    </div>
+</section>
+
+    <!-- Login Form -->
+    <div class="login-container" id="login-container" style="display:none;">
+        <form class="login-form" id="loginForm" autocomplete="off">
+            <h2>Iniciar Sesión</h2>
+            <input type="text" id="username" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+            <div class="login-message" id="loginMessage"></div>
+        </form>
+    </div>
+
+    <script src="funciones.js"></script>
+    <script>
+        // Utilidad para obtener usuario logueado
+function getUsuarioLogueado() {
+    const user = sessionStorage.getItem('itc_pedia_user');
+    return user ? JSON.parse(user) : null;
+}
+
+// Mostrar usuario y botón de logout si está logueado
+function actualizarUsuarioNav() {
+    const user = getUsuarioLogueado();
+    const userInfo = document.getElementById('user-info');
+    const logoutBtn = document.getElementById('logout-btn');
+    if (user) {
+        document.getElementById('login-container').style.display = 'none';
+        // Formato más compacto: solo mostrar username y primera letra del rol
+        const rolAbrev = user.rol === 'admin' ? 'A' : user.rol.charAt(0).toUpperCase();
+        userInfo.textContent = `${user.username}(${rolAbrev})`;
+        logoutBtn.style.display = 'inline-block';
+    } else {
+        document.getElementById('login-container').style.display = 'flex';
+        userInfo.textContent = '';
+        logoutBtn.style.display = 'none';
+    }
+}
+
+actualizarUsuarioNav();
+
+// Manejo del formulario de login
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const result = login(username, password);
+    const msg = document.getElementById('loginMessage');
+    if(result.success) {
+        // Guardar usuario en sessionStorage
+        sessionStorage.setItem('itc_pedia_user', JSON.stringify({ username, rol: result.rol }));
+        msg.style.color = 'limegreen';
+        msg.textContent = 'Bienvenido, rol: ' + result.rol;
+        setTimeout(() => {
+            actualizarUsuarioNav();
+            msg.textContent = '';
+        }, 1000);
+    } else {
+        msg.style.color = 'crimson';
+        msg.textContent = result.message;
+    }
+});
+
+// Botón de logout
+document.getElementById('logout-btn').addEventListener('click', function() {
+    sessionStorage.removeItem('itc_pedia_user');
+    actualizarUsuarioNav();
+});
+
+// --- El resto de tu código (PDFs, configuraciones, etc.) sigue usando localStorage ---
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const user = sessionStorage.getItem('itc_pedia_user');
+    if (!user) {
+        document.getElementById('login-container').style.display = 'flex';
+    } else {
+        document.getElementById('login-container').style.display = 'none';
+    }
+});
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar usuario y botón de logout si está logueado
+    function actualizarUsuarioNav() {
+        const user = getUsuarioLogueado();
+        const userInfo = document.getElementById('user-info');
+        const logoutBtn = document.getElementById('logout-btn');
+        if (user) {
+            document.getElementById('login-container').style.display = 'none';
+            // Formato más compacto: solo mostrar username y primera letra del rol
+            const rolAbrev = user.rol === 'admin' ? 'A' : user.rol.charAt(0).toUpperCase();
+            userInfo.textContent = `${user.username}(${rolAbrev})`;
+            logoutBtn.style.display = 'inline-block';
+        } else {
+            document.getElementById('login-container').style.display = 'flex';
+            userInfo.textContent = '';
+            logoutBtn.style.display = 'none';
+        }
+    }
+
+    actualizarUsuarioNav();
+
+    // Manejo del formulario de login
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const result = login(username, password);
+        const msg = document.getElementById('loginMessage');
+        if(result.success) {
+            msg.style.color = 'limegreen';
+            msg.textContent = 'Bienvenido, rol: ' + result.rol;
+            setTimeout(() => {
+                actualizarUsuarioNav();
+                msg.textContent = '';
+            }, 1000);
+        } else {
+            msg.style.color = 'crimson';
+            msg.textContent = result.message;
+        }
+    });
+
+    // Botón de logout
+    document.getElementById('logout-btn').addEventListener('click', function() {
+        logout();
+        actualizarUsuarioNav();
+    });
+
+    // Atención telefónica - Detalles
+    const btnAtencion = document.getElementById('btn-atencion-telefonica');
+    const detalle = document.getElementById('atencion-telefonica-detalle');
+    const cerrar = document.getElementById('cerrar-detalle');
+    if(btnAtencion && detalle && cerrar) {
+        btnAtencion.addEventListener('click', function() {
+            detalle.style.display = 'flex';
+        });
+        cerrar.addEventListener('click', function() {
+            detalle.style.display = 'none';
+        });
+    }
+
+    const esferaSoporte = document.getElementById('esfera-soporte');
+    if(esferaSoporte) {
+        esferaSoporte.style.cursor = "pointer";
+        esferaSoporte.addEventListener('click', function() {
+            window.location.href = "pagina2.html";
+        });
+    }
+
+    // Establecer usuario por defecto (solo para propósitos de demostración)
+    
+});
+    </script>
+</body>
+</html>

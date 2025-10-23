@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Conversión PDF - ITC-PEDIA</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #ff0000;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            background: #ffeaea;
+            border-color: #b80000;
+        }
+        .upload-area.dragover {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+        .btn {
+            background: linear-gradient(90deg, #ff0000 0%, #b80000 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0.5rem;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .result {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .progress {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: #ff0000;">🔬 Test de Conversión PDF a Instructivo</h1>
+        <p>Esta página permite probar la funcionalidad de conversión de PDF antes de integrarla en el sistema principal.</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📄➡️📝</div>
+            <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">Arrastra tu archivo PDF aquí</div>
+            <div style="font-size: 0.9rem; color: #666;">o haz clic para seleccionar</div>
+            <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+        </div>
+        
+        <div>
+            <input type="text" id="title" placeholder="Título del documento" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 4px;">
+            <textarea id="description" placeholder="Descripción (opcional)" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 4px; height: 80px; resize: vertical;"></textarea>
+            <button class="btn" id="convertBtn" disabled>Convertir PDF</button>
+            <button class="btn" id="clearBtn" style="background: #6c757d;">Limpiar</button>
+        </div>
+        
+        <div class="result" id="result" style="display: none;">
+            <h3>Resultado de la conversión:</h3>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+    
+    <div class="progress" id="progress">
+        <div style="text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
+            <div id="progressText">Procesando...</div>
+        </div>
+    </div>
+
+    <script>
+        let currentFile = null;
+
+        // Configurar PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Event listeners
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('uploadArea').addEventListener('dragover', (e) => {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.add('dragover');
+        });
+
+        document.getElementById('uploadArea').addEventListener('dragleave', () => {
+            document.getElementById('uploadArea').classList.remove('dragover');
+        });
+
+        document.getElementById('uploadArea').addEventListener('drop', (e) => {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') {
+                handleFileUpload(files[0]);
+            } else {
+                alert('Por favor, selecciona un archivo PDF válido.');
+            }
+        });
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        document.getElementById('convertBtn').addEventListener('click', convertPDF);
+        document.getElementById('clearBtn').addEventListener('click', clearForm);
+
+        function handleFileUpload(file) {
+            currentFile = file;
+            const size = (file.size / 1024 / 1024).toFixed(2);
+            document.querySelector('.upload-area div:nth-child(2)').textContent = `Archivo: ${file.name} (${size} MB)`;
+            document.getElementById('convertBtn').disabled = false;
+            
+            // Auto-llenar título si está vacío
+            if (!document.getElementById('title').value) {
+                document.getElementById('title').value = file.name.replace('.pdf', '');
+            }
+        }
+
+        async function convertPDF() {
+            if (!currentFile) {
+                alert('Por favor, selecciona un archivo PDF primero.');
+                return;
+            }
+
+            const title = document.getElementById('title').value.trim();
+            if (!title) {
+                alert('Por favor, ingresa un título.');
+                return;
+            }
+
+            try {
+                showProgress('Leyendo archivo PDF...');
+                const pdfText = await extractTextFromPDF(currentFile);
+                
+                showProgress('Convirtiendo a formato instructivo...');
+                const instructivoContent = formatTextAsInstructivo(pdfText, title, document.getElementById('description').value);
+                
+                hideProgress();
+                showResult(instructivoContent);
+                
+            } catch (error) {
+                hideProgress();
+                console.error('Error:', error);
+                alert('Error al procesar el PDF: ' + error.message);
+            }
+        }
+
+        async function extractTextFromPDF(file) {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                
+                fileReader.onload = async function() {
+                    try {
+                        const typedarray = new Uint8Array(this.result);
+                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                        let fullText = '';
+                        
+                        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                            showProgress(`Procesando página ${pageNum} de ${pdf.numPages}...`);
+                            
+                            const page = await pdf.getPage(pageNum);
+                            const textContent = await page.getTextContent();
+                            
+                            const pageText = textContent.items
+                                .map(item => item.str)
+                                .join(' ')
+                                .trim();
+                            
+                            if (pageText) {
+                                fullText += `\n\n=== PÁGINA ${pageNum} ===\n\n${pageText}`;
+                            }
+                        }
+                        
+                        resolve(fullText);
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                
+                fileReader.onerror = () => reject(new Error('Error al leer el archivo'));
+                fileReader.readAsArrayBuffer(file);
+            });
+        }
+
+        function formatTextAsInstructivo(text, title, description) {
+            let content = `<h1>${title}</h1>\n\n`;
+            
+            if (description) {
+                content += `<div style="background: #f8f9fa; padding: 1rem; border-left: 4px solid #ff0000; margin-bottom: 2rem;">
+                    <p><strong>📋 Descripción:</strong> ${description}</p>
+                    <p><strong>📅 Convertido:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+                </div>\n\n`;
+            }
+            
+            const pages = text.split('=== PÁGINA');
+            
+            pages.forEach((page, index) => {
+                if (index === 0) return;
+                
+                const pageContent = page.replace(/^\s*\d+\s*===/, '').trim();
+                if (!pageContent) return;
+                
+                content += `<h2>📄 Página ${index}</h2>\n\n`;
+                
+                const paragraphs = pageContent
+                    .split(/\n\s*\n/)
+                    .filter(p => p.trim().length > 0)
+                    .map(p => p.trim());
+                
+                paragraphs.forEach(paragraph => {
+                    if (paragraph.length < 100 && paragraph.match(/^[A-ZÁÉÍÓÚÑ\s\d\.\-:]+$/)) {
+                        content += `<h3>${paragraph}</h3>\n\n`;
+                    } 
+                    else if (paragraph.match(/^\s*[\d\-\•]/)) {
+                        const listItems = paragraph.split(/\n/).filter(item => item.trim());
+                        content += '<ul>\n';
+                        listItems.forEach(item => {
+                            const cleanItem = item.replace(/^\s*[\d\-\•\.\)]\s*/, '').trim();
+                            if (cleanItem) {
+                                content += `<li>${cleanItem}</li>\n`;
+                            }
+                        });
+                        content += '</ul>\n\n';
+                    }
+                    else {
+                        content += `<p>${paragraph}</p>\n\n`;
+                    }
+                });
+            });
+            
+            content += `\n\n<div style="background: #e7f3ff; padding: 1rem; border-radius: 4px; border-left: 4px solid #2196f3; margin-top: 2rem;">
+                <p><strong>ℹ️ Nota:</strong> Este instructivo fue generado automáticamente desde un archivo PDF.</p>
+            </div>`;
+            
+            return content;
+        }
+
+        function showProgress(message) {
+            document.getElementById('progressText').textContent = message;
+            document.getElementById('progress').style.display = 'block';
+        }
+
+        function hideProgress() {
+            document.getElementById('progress').style.display = 'none';
+        }
+
+        function showResult(content) {
+            document.getElementById('resultContent').innerHTML = content;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearForm() {
+            currentFile = null;
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('convertBtn').disabled = true;
+            document.getElementById('result').style.display = 'none';
+            document.querySelector('.upload-area div:nth-child(2)').textContent = 'Arrastra tu archivo PDF aquí';
+        }
+    </script>
+</body>
+</html>

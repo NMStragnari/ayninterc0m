@@ -1,0 +1,199 @@
+.logo {
+    height: 2.2rem !important;
+    width: auto;
+    display: block;
+    /* Si quieres centrar verticalmente el logo en el nav */
+    /* align-self: center; */
+}
+
+.login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex; /* Asegúrate de que sea flex y NO none */
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.login-form {
+    background: #181818;
+    padding: 2.5rem 2rem 2rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    display: flex;
+    flex-direction: column;
+    min-width: 320px;
+    gap: 1rem;
+    align-items: center;
+}
+
+.login-form h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    outline: none;
+    background: #232323;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    transition: background 0.2s;
+}
+
+.login-form input:focus {
+    background: #2d2d2d;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: linear-gradient(135deg, #ff1f1f 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-form button:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #ff1f1f 100%);
+}
+
+.login-message {
+    min-height: 1.5em;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+#user-info {
+    font-size: 1rem;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#logout-btn {
+    font-size: 1rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 16px;
+    margin-left: 0.5rem;
+}
+
+.atencion-telefonica-detalle {
+    position: static !important;
+    background: none !important;
+    box-shadow: none !important;
+    display: none;
+    width: 100%;
+    animation: fadeInUp 0.5s;
+}
+.detalle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem auto;
+    background: #181818;
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.15);
+    color: #fff;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    padding: 2.5rem 2rem;
+}
+
+/* Agrega esto a tu style.css */
+.detalle-esferas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem 1.5rem;
+    justify-items: center;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 600px) {
+    .detalle-esferas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.esfera {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 110px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 1rem 0.5rem 0.7rem 0.5rem;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    transition: transform 0.2s, background 0.2s;
+    justify-self: center;
+}
+.esfera:hover {
+    transform: translateY(-4px) scale(1.04);
+    background: rgba(255,255,255,0.13);
+}
+.esfera-icono {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff867d 0%, #ff0800 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
+}
+.esfera-titulo {
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 0.3rem;
+}
+
+.feature-card {
+    background: #ededed;
+    border: 1px solid #ececec;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    color: #000;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04);
+}
+.feature-card:hover {
+    transform: translateY(-10px);
+    background: #e0e0e0;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+    .feature-card {
+        background: #232323;
+        color: #fff;
+        border: 1px solid #333;
+    }
+    .feature-card:hover {
+        background: #181818;
+    }
+}
